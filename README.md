@@ -4,7 +4,7 @@
 This script is JavaScript wrapper for .
 
  - What is MIDI? -> [MIDI@wikipedia](http://en.wikipedia.org/wiki/MIDI)
-  - What is Web MIDI API? -> [Web MIDI API@W3C](http://webaudio.github.io/web-midi-api/)
+ - What is Web MIDI API? -> [Web MIDI API@W3C](http://webaudio.github.io/web-midi-api/)
 
 ## Purpose of using this Wrapper
 MIDI is well defined protocol. But to use the protocol you must learn 7bit code, such as NoteOn: 9nH, NoteOff: 8nH.
@@ -43,8 +43,8 @@ So, please install [Jazz-Plugin](http://jazz-soft.net/) developed by Jazz-Soft.n
 
 
  - Set an EventHandler for **setMidiInputSelect** and **setMidiOutputSelect**
- - **setMidiInputSelect** : What the script do when MIDI *input* port is selected.
- - **setMidiOutputSelect** : What the script do when MIDI *output* port is selected.
+     - **setMidiInputSelect** : behavier of when MIDI *input* port is selected
+     - **setMidiOutputSelect** : behavier of  when MIDI *output* port is selected
  - Set an EventHandler named **onmidimessage** inside of setMidiInputSelect EventHandler.
 
  - Do initialization.
@@ -57,7 +57,7 @@ wmaw.init();
  - Set MIDI Output
  - Now Ready to send MIDI messages.
 
-## Method of sending MIDI Message
+## Method to send MIDI Messages
 
 **'sendNoteOn(portNo, ch, note, velocity, time)'**  
 *description*: send noteOn message to ch of portNo.  
