@@ -32,13 +32,13 @@ So, please install [Jazz-Plugin](http://jazz-soft.net/) developed by Jazz-Soft.n
 
 ```
 <script src="[PathToJS]/WebMIDIAPI.js"></script>
-<script src="[PathToJS]/webmidilib.js"></script>
+<script src="[PathToJS]/WebMIDIAPIWrapper.js"></script>
 ```
 
  - create constructor
 
 ```
- var wmaw = new webMidiWrapper( false );
+ var wmaw = new WebMIDIAPIWrapper( false );
  ```
 
 
@@ -54,11 +54,8 @@ wmaw.init();
 ```
 
  - Set MIDI Input
-
  - Set MIDI Output
-
  - Now Ready to send MIDI messages.
-
 
 ## Method of sending MIDI Message
 
@@ -154,10 +151,12 @@ wmaw.init();
 
 
 ## Live Demo
-[xxx](xxx)
+[https://dl.dropboxusercontent.com/u/695740/WebMIDIAPIWrapper/index.html](https://dl.dropboxusercontent.com/u/695740/WebMIDIAPIWrapper/index.html)
 
-In the demo, js/ctrlctrlWebmidilib.js is the 
-![](!!https://raw.github.com/ryoyakawai/webaudio-slider/master/images/screenshot.jpg)
+ - Mac users: Select "Apple DLS Synth (0.Apple DLS Synth)" for output device.
+ - Windows users: Select "Microsoft GS Wavetable Synth (0.Microsoft GS Wavetable Synth)" for output device.
+
+In the demo, js/ctrlctrlWebmidilib.js is the main JavaScript file. 
 
 
 
