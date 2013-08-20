@@ -43,8 +43,8 @@ So, please install [Jazz-Plugin](http://jazz-soft.net/) developed by Jazz-Soft.n
 
 
  - Set an EventHandler for **setMidiInputSelect** and **setMidiOutputSelect**
-     - **setMidiInputSelect** : behavier of when MIDI *input* port is selected
-     - **setMidiOutputSelect** : behavier of  when MIDI *output* port is selected
+     - **setMidiInputSelect** : display MIDI *input* ports, and EventHandler of when MIDI *input* port is specified
+     - **setMidiOutputSelect** : display MIDI *output* ports, and EventHandler of when MIDI *output* port is specified
  - Set an EventHandler named **onmidimessage** inside of setMidiInputSelect EventHandler.
 
  - Do initialization.
@@ -52,10 +52,6 @@ So, please install [Jazz-Plugin](http://jazz-soft.net/) developed by Jazz-Soft.n
 ```
 wmaw.init();
 ```
-
- - Set MIDI Input
- - Set MIDI Output
- - Now Ready to send MIDI messages.
 
 ## Method to send MIDI Messages
 
