@@ -1,7 +1,7 @@
 # Web MIDI API Wrapper
 
 ## What is this?
-This script is JavaScript wrapper for .
+This script is JavaScript wrapper for developers who wants to play with Musical Instruments and web browser, and who wants to controll Musical Instruments from web browser!!
 
  - What is MIDI? -> [MIDI@wikipedia](http://en.wikipedia.org/wiki/MIDI)
  - What is Web MIDI API? -> [Web MIDI API@W3C](http://webaudio.github.io/web-midi-api/)
