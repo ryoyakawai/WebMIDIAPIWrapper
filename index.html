@@ -1,19 +1,48 @@
 <html>
   <head>
     <title>Web MIDI API Wrapper Demo</title>
+    <style tyle="text/css">
+    body{ margin:20px; font-family:Helvetica; font-size:0.85em;}
+    </style>
   </head>
   <body>
+    <h1>Web MIDI API Wrapper Demo</h1>
     
+    <h3 id="errorText" style="visibility:hidden; color:red; border: 2px solid #ffa500; border-radius:4px;background-color:#fffacd; padding: 5px;"></h3>
+
+    <h3 id="devicesText" style="margin:0px; visibility:hidden;">[Select your device]</h3>
     <div id="midiInDevices"></div>
     <div id="midiOutDevices"></div>
+    <br>
+
+    <div id="fireTriText" style="visibility:hidden;">You might know this sound.</div>
+    <div><span id="fireTri"></span></div>    
+    <br>
+
+    <h3 id="prgChangeText" style="margin: 0px; visibility:hidden;">[Play sound with ProgramChange]</h3>
+    <div id="prgChangeText01" style="visibility:hidden;">Select a voice to try lestening sound with your favorite voice!!</div>
+    <div><span id="prgChange"></span><span id="voicename" style="margin: 0px 5px;"></span></div>
+
     <div id="midiFireButton"></div>
     <div><span id="sustainFireButton"></span><span id="sustainvalue"></span></div>
     <div><span id="bendFireButton"></span><span id="bendvalue" style="margin: 0px 5px;"></span></div>
     <div><span id="modFireButton"></span><span id="modvalue" style="margin: 0px 5px;"></span></div>
+    <br>
+
+    <div id="allOffText" style="visibility:hidden;">Try with difference between AllSoundOff and AllNoteOff with [Fire MIDI (Sustain oneNote)] button.<br>(Suddenly stop with AllSoundOff even sustain and sound reflection, but AllNoteOff does not.) </div>
+    <div><span id="sustain2FireButton"></span><span id="sustainvalue"></span></div>
+    <div><span id="allNoteOff"></span></div>
+    <div><span id="allSndOff"></span></div>    
+
+    <br>
+    <hr>
+    <p>Developed by <a href="https://plus.google.com/108242669191458983485" target="_blank">Ryoya KAWAI</a>.
+
 
     <script src="js/WebMIDIAPI.js"></script>
     <script src="js/WebMIDIAPIWrapper.js"></script>
     <script src="js/ctrlWebMIDIAPIWrapper.js"></script>
+    <script src="js/voiceList.js"></script>
 
     <script type="text/javascript">
     var _gaq = _gaq || [];
