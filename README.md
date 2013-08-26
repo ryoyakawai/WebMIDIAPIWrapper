@@ -145,6 +145,19 @@ wmaw.init();
 - ch: ch number to send message in the port
 - time: the time at which to begin sending the data to the port
 
+**'sendRaw(portNo, msg, time)'**  
+*description*: send Raw MIDI message by array.  
+*values*:
+  
+- portNo: port number to send message
+- msg: set MIDI message as array. In the array, either hexadecimal or decimal (even mixture format) is allow to specify.  e.g.) [0x80, 72, 120]
+- time: the time at which to begin sending the data to the port
+
+**'initializePerformanceNow()'**  
+*description*: Initialize start time.  
+*values*: no valuables
+
+
 
 ## Live Demo
 [https://dl.dropboxusercontent.com/u/695740/WebMIDIAPIWrapper/index.html](https://dl.dropboxusercontent.com/u/695740/WebMIDIAPIWrapper/index.html)

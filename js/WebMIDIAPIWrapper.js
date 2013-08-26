@@ -43,9 +43,24 @@ WebMIDIAPIWrapper.prototype = {
     initializePerformanceNow: function() {
         this.performanceNow=window.performance.now();
     },
-    // channel, note, velocity, time(ms)
+    _checkTyeof: function(type, obj) {
+        var clas = Object.prototype.toString.call(obj).slice(8, -1);
+        return obj !== undefined && obj !== null && clas === type;
+    },
+    _checkPortNo: function(portNo) {
+        if(isNaN(portNo)===true) {
+            console.log("[ERROR] PortNo is NOT the type of number. ["+ portNo+"]");
+            return false;
+        }
+        return parseInt(portNo ,10);
+    },
     sendNoteOn: function(portNo, ch, note, velocity, time) {
-        var portNo=0, now=this.performanceNow;
+        var portNo=this._checkPortNo(portNo);
+        if(portNo===false) {
+            console.log("[ERROR] @sendNoteOn");
+            return;
+        }
+        var now=this.performanceNow;
         var fb=parseInt("0x9" + ch.toString(16), 16);
         if(typeof time!=="number") {
             time=0;
@@ -54,7 +69,12 @@ WebMIDIAPIWrapper.prototype = {
         this.ports.out[portNo].send(msg, now+time);
     },
     sendNoteOff: function(portNo, ch, note, velocity, time) {
-        var portNo=0, now=this.performanceNow;
+        var portNo=this._checkPortNo(portNo);
+        if(portNo===false) {
+            console.log("[ERROR] @sendNoteOn");
+            return;
+        }
+        var now=this.performanceNow;
         var fb=parseInt("0x8" + ch.toString(16), 16);
         if(typeof time!=="number") {
             time=0;
@@ -63,7 +83,12 @@ WebMIDIAPIWrapper.prototype = {
         this.ports.out[portNo].send(msg, now+time);
     },
     sendProgramChange: function(portNo, ch, programNo, time) {
-        var portNo=0, now=this.performanceNow;
+        var portNo=this._checkPortNo(portNo);
+        if(portNo===false) {
+            console.log("[ERROR] @sendNoteOn");
+            return;
+        }
+        var now=this.performanceNow;
         var value = value < 0 ? 0 : value > 127 ? 127 : value;
         var fb=parseInt("0xc" + ch.toString(16), 16);
         if(typeof time!=="number") {
@@ -76,17 +101,27 @@ WebMIDIAPIWrapper.prototype = {
         this.ports.out[portNo].pitchBendValue={"min": parseInt(min), "max": parseInt(max), "center": parseInt(center)};
     },
     sendPitchBend: function(portNo, ch, value, time) {
-        var portNo=0, now=this.performanceNow;
+        var portNo=this._checkPortNo(portNo);
+        if(portNo===false) {
+            console.log("[ERROR] @sendNoteOn");
+            return;
+        }
+        var now=this.performanceNow;
         var fb=parseInt("0xe" + ch.toString(16), 16);
         var value = value < this.ports.out[portNo].pitchBendValue.min ? this.ports.out[portNo].pitchBendValue.min : value > this.ports.out[portNo].pitchBendValue.max ? this.ports.out[portNo].pitchBendValue.max : value;
-        var msb=(~~(value/128));//.toString(16);
-        var lsb=(value%128);//.toString(16);
+        var msb=(~~(value/128));
+        var lsb=(value%128);
 
         var msg=[fb, lsb, msb];
         this.ports.out[portNo].send(msg, now+time);
     },
     sendSustainStatus: function(portNo, ch, status, time) {
-        var portNo=0, now=this.performanceNow;
+        var portNo=this._checkPortNo(portNo);
+        if(portNo===false) {
+            console.log("[ERROR] @sendNoteOn");
+            return;
+        }
+        var now=this.performanceNow;
         var fb=parseInt("0xb" + ch.toString(16), 16);
         var msg=[fb, 0x40, 0x00];
         switch(status) {
@@ -97,31 +132,62 @@ WebMIDIAPIWrapper.prototype = {
         this.ports.out[portNo].send(msg, now+time);
     },
     sendModulationValue: function(portNo, ch, value, time) {
-        var portNo=0, now=this.performanceNow;
+        var portNo=this._checkPortNo(portNo);
+        if(portNo===false) {
+            console.log("[ERROR] @sendNoteOn");
+            return;
+        }
+        var now=this.performanceNow;
         var fb=parseInt("0xb" + ch.toString(16), 16);
         var value = value < 0 ? 0 : value > 127 ? 127 : value;
         var msg=[fb, 0x01, value];
         this.ports.out[portNo].send(msg, now+time);
     },
     sendAllSoundOff: function(portNo, ch, time) {
-        var portNo=0, now=this.performanceNow;
+        var portNo=this._checkPortNo(portNo);
+        if(portNo===false) {
+            console.log("[ERROR] @sendNoteOn");
+            return;
+        }
+        var now=this.performanceNow;
         var fb=parseInt("0xb" + ch.toString(16), 16);
         var msg=[ fb, 0x78, 0x00 ];
         this.ports.out[portNo].send(msg, now+time);
     },
     sendResetAllController: function(portNo, ch, time) {
-        var portNo=0, now=this.performanceNow;
+        var portNo=this._checkPortNo(portNo);
+        if(portNo===false) {
+            console.log("[ERROR] @sendNoteOn");
+            return;
+        }
+        var now=this.performanceNow;
         var fb=parseInt("0xb" + ch.toString(16), 16);
         var msg=[ fb, 0x79, 0x00 ];
         this.ports.out[portNo].send(msg, now+time);
     },
     sendAllNoteOff: function(portNo, ch, time) {
-        var portNo=0, now=this.performanceNow;
+        var portNo=this._checkPortNo(portNo);
+        if(portNo===false) {
+            console.log("[ERROR] @sendNoteOn");
+            return;
+        }
+        var now=this.performanceNow;
         var fb=parseInt("0xb" + ch.toString(16), 16);
         var msg=[ fb, 0x7b, 0x00 ];
         this.ports.out[portNo].send(msg, now+time);
+    },
+    sendRaw: function(portNo, msg, time) {
+        var portNo=this._checkPortNo(portNo);
+        if(portNo===false) {
+            console.log("[ERROR] @sendNoteOn");
+            return;
+        }
+        var now=this.performanceNow;
+        if(this._checkTyeof("array", msg)===true) {
+            console.log("[Error] SendRaw : msg must array." + msg);
+            return;
+        }
+        this.ports.out[portNo].send(msg, now+time);
     }
-
-
 };
 

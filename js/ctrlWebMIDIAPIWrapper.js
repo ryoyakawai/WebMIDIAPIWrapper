@@ -4,7 +4,8 @@ try {
     }
     document.getElementById("errorText").style.setProperty("display", "none");
 
-    var wmaw= new WebMIDIAPIWrapper( false );
+    var wmaw = new WebMIDIAPIWrapper( true );
+    var config = { "programNo": 0 };
     
     wmaw.setMidiInputSelect=function() {
         var miButton=document.createElement("input"); // mi: midi input
@@ -140,6 +141,7 @@ try {
             prgChange.addEventListener("change", function() {
                 document.getElementById("voicename").innerHTML=this.value+". "+voiceList.getGMVoiceName("instruments", this.value);
                 wmaw.sendProgramChange(0, 0, this.value, 0);
+                config.programNo=this.value;
             });
             document.getElementById("prgChange").appendChild(prgChange);
             document.getElementById("prgChange").style.setProperty("margin", "100px 0px 0px 0px");
@@ -150,7 +152,7 @@ try {
             
             var fireMod = document.createElement("input");
             fireMod.id="fireMod"; fireMod.type="button"; 
-            fireMod.value="Fire Midi (Mod)";
+            fireMod.value="Fire MIDI (Mod)";
             document.getElementById("modFireButton").appendChild(fireMod);
             document.getElementById("fireMod").addEventListener("click", function() {
                 wmaw.setPitchBendValue(0, 0, 16384, 8192);
@@ -188,7 +190,7 @@ try {
             document.getElementById("fireTri").addEventListener("click", function() {
                 wmaw.initializePerformanceNow();
                 wmaw.sendProgramChange(0, 0, 12, 0);
-                wmaw.sendProgramChange(0, 0, 0, 370);
+                wmaw.sendProgramChange(0, 0, config.programNo, 370);
                 
                 wmaw.sendNoteOn(0, 0, 62, 127, 0);
                 wmaw.sendNoteOff(0, 0, 62, 0, 120);
@@ -233,7 +235,32 @@ try {
                 wmaw.initializePerformanceNow();
                 wmaw.sendAllNoteOff(0, 0, 0);
             });
-            
+
+            document.getElementById("sendRaw01").style.removeProperty("visibility");
+            var sendRaw = document.createElement("input");
+            sendRaw.id="sendRaw"; sendRaw.type="button"; 
+            sendRaw.value="Fire MIDI (sendRaw())";
+            document.getElementById("sendRaw").appendChild(sendRaw);
+            document.getElementById("sendRaw").addEventListener("click", function() {
+                wmaw.initializePerformanceNow();
+
+                wmaw.sendRaw(0, [0x90, 72, 60], 0);
+                wmaw.sendRaw(0, [0x80, 72, 60], 500);
+                
+                wmaw.sendRaw(0, [0x90, 74, 80], 500);
+                wmaw.sendRaw(0, [0x80, 74, 80], 1000);
+                
+                wmaw.sendRaw(0, [0x90, 76, 100], 1000);
+                wmaw.sendRaw(0, [0x80, 76, 100], 1500);
+                
+                wmaw.sendRaw(0, [0x90, 77, 120], 1500);
+                wmaw.sendRaw(0, [0x80, 77, 120], 2000);
+                
+                wmaw.sendRaw(0, [0x90, 79, 127], 2000);
+                wmaw.sendRaw(0, [0x80, 79, 127], 2500);
+
+            });
+
         });
         
     };
