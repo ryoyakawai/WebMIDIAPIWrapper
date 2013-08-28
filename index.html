@@ -24,10 +24,15 @@
     <div id="prgChangeText01" style="visibility:hidden;">Select a voice to try lestening sound with your favorite voice!!</div>
     <div><span id="prgChange"></span><span id="voicename" style="margin: 0px 5px;"></span></div>
 
-    <div id="midiFireButton"></div>
-    <div><span id="sustainFireButton"></span><span id="sustainvalue"></span></div>
-    <div><span id="bendFireButton"></span><span id="bendvalue" style="margin: 0px 5px;"></span></div>
-    <div><span id="modFireButton"></span><span id="modvalue" style="margin: 0px 5px;"></span></div>
+    <div id="midiFireButton" style="float:left;"></div>
+    <div style="float:left;"><span id="sustainFireButton"></span><span id="sustainvalue"></span></div>
+    <div style="float:left;"><span id="bendFireButton"></span><span id="bendvalue" style="margin: 0px 5px;"></span></div>
+    <div style="float:left;"><span id="modFireButton"></span><span id="modvalue" style="margin: 0px 5px;"></span></div>
+    <br style="clear:both;">
+    <br>
+
+    <div id="prgChangeText02" style="visibility:hidden;">Play with virtual MIDI keybord!!</div>
+    <div class="keyCanvasArea"><canvas id="keyboard" height="0px"></canvas></div>
     <br>
 
     <div id="sendRaw01" style="visibility:hidden;">Sounds exactly same with [Fire MIDI], but this button using sendRaw() method.</div>
@@ -49,6 +54,7 @@
     <script src="js/WebMIDIAPIWrapper.js"></script>
     <script src="js/ctrlWebMIDIAPIWrapper.js"></script>
     <script src="js/voiceList.js"></script>
+    <script src="js/flatKeyboard.js"></script>
 
     <script type="text/javascript">
     var _gaq = _gaq || [];

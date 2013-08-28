@@ -22,6 +22,7 @@ try {
 
     var wmaw = new WebMIDIAPIWrapper( true );
     var config = { "programNo": 0 };
+    var timerId;
     
     wmaw.setMidiInputSelect=function() {
         var miButton=document.createElement("input"); // mi: midi input
@@ -165,6 +166,7 @@ try {
             document.getElementById("prgChange").appendChild(prgChange);
             document.getElementById("prgChangeText").style.removeProperty("visibility");
             document.getElementById("prgChangeText01").style.removeProperty("visibility");
+            document.getElementById("prgChangeText02").style.removeProperty("visibility");
             
             var fireMod = document.createElement("input");
             fireMod.id="fireMod"; fireMod.type="button"; 
@@ -277,6 +279,18 @@ try {
 
             });
 
+            var fKey = new FlatKeyboard("keyboard");
+            timerId = setInterval(function(){
+                fKey.draw();
+            }, 80);
+            fKey.setConnected();
+            fKey.noteOn=function(noteNo) {
+                wmaw.sendNoteOn(0, 0, noteNo, 127, 0);
+            };
+            fKey.noteOff=function(noteNo) {
+                wmaw.sendNoteOff(0, 0, noteNo, 127, 0);
+            };
+            
         });
         
     };
