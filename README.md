@@ -9,7 +9,7 @@ This script is JavaScript wrapper for developers who wants to play with Musical 
 ## Live Demo
 [https://dl.dropboxusercontent.com/u/695740/WebMIDIAPIWrapper/index.html](https://dl.dropboxusercontent.com/u/695740/WebMIDIAPIWrapper/index.html)
 
-![](https://raw.github.com/ryoyakawai/WebMIDIAPIWrapper.git/master/images/screenshot.jpg)
+![](https://raw.github.com/ryoyakawai/WebMIDIAPIWrapper/master/images/screenshot.jpg)
 
  - Mac users: Select "Apple DLS Synth (0.Apple DLS Synth)" for output device.
  - Windows users: Select "Microsoft GS Wavetable Synth (0.Microsoft GS Wavetable Synth)" for output device.
