@@ -1,22 +1,20 @@
 # Web MIDI API Wrapper
 
-## What is this?
-This script is JavaScript wrapper for developers who wants to play with Musical Instruments and web browser!!
-
- - What is MIDI? -> [MIDI@wikipedia](http://en.wikipedia.org/wiki/MIDI)
- - What is Web MIDI API? -> [Web MIDI API@W3C](http://webaudio.github.io/web-midi-api/)
-
 ## Live Demo
 [https://dl.dropboxusercontent.com/u/695740/WebMIDIAPIWrapper/index.html](https://dl.dropboxusercontent.com/u/695740/WebMIDIAPIWrapper/index.html)
-
-![](https://raw.github.com/ryoyakawai/WebMIDIAPIWrapper/master/images/screenshot.jpg)
 
  - Mac users: Select "Apple DLS Synth (0.Apple DLS Synth)" for output device.
  - Windows users: Select "Microsoft GS Wavetable Synth (0.Microsoft GS Wavetable Synth)" for output device.
 
 In the demo, js/ctrlctrlWebmidilib.js is the main JavaScript file. 
 
+![](https://raw.github.com/ryoyakawai/WebMIDIAPIWrapper/master/images/screenshot.jpg)
 
+## What is this?
+This script is JavaScript wrapper for developers who wants to play with Musical Instruments and web browser!!
+
+ - What is MIDI? -> [MIDI@wikipedia](http://en.wikipedia.org/wiki/MIDI)
+ - What is Web MIDI API? -> [Web MIDI API@W3C](http://webaudio.github.io/web-midi-api/)
 
 ## Purpose of using this Wrapper
 MIDI is well defined protocol. But to use the protocol you must learn 7bit code, such as NoteOn: 9nH, NoteOff: 8nH.
