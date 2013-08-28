@@ -24,6 +24,7 @@ try {
     var config = { "programNo": 0 };
     var timerId;
     var disp=false;
+    var fKey = new FlatKeyboard("keyboard");
     
     wmaw.setMidiInputSelect=function() {
         var miButton=document.createElement("input"); // mi: midi input
@@ -42,11 +43,12 @@ try {
             var selIdx=document.getElementById("midiinlist").value;
             function onmidimessage(event) {
                 var midimsg0=event.data[0].toString(16), midimsg1=event.data[1].toString(16), midimsg2=event.data[2].toString(16);
-                console.log(midimsg0 + " " + midimsg1 + " " + midimsg2);
                 if(typeof wmaw.ports.out[0]==="object") {
                     wmaw.ports.out[0].send([event.data[0], event.data[1], event.data[2]]);
                 }
+                fKey.onmessage(event.data);
             }
+
             wmaw.setMidiInputToPort(selIdx, 0, onmidimessage);
         });
         
@@ -71,6 +73,17 @@ try {
             if(disp===false) {
                 disp=true;
                 
+                timerId = setInterval(function(){
+                    fKey.draw();
+                }, 80);
+                fKey.setConnected();
+                fKey.noteOn=function(noteNo) {
+                    wmaw.sendNoteOn(0, 0, noteNo, 127, 0);
+                };
+                fKey.noteOff=function(noteNo) {
+                    wmaw.sendNoteOff(0, 0, noteNo, 127, 0);
+                };
+
                 var selIdx=document.getElementById("midioutlist").value;
                 wmaw.setMidiOutputToPort(selIdx, 0);
             
@@ -282,18 +295,6 @@ try {
                     wmaw.sendRaw(0, [0x80, 79, 127], 2500);
                     
                 });
-                
-                var fKey = new FlatKeyboard("keyboard");
-                timerId = setInterval(function(){
-                    fKey.draw();
-                }, 80);
-                fKey.setConnected();
-                fKey.noteOn=function(noteNo) {
-                    wmaw.sendNoteOn(0, 0, noteNo, 127, 0);
-                };
-                fKey.noteOff=function(noteNo) {
-                    wmaw.sendNoteOff(0, 0, noteNo, 127, 0);
-                };
             }
         });
         

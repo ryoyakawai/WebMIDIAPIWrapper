@@ -30,6 +30,9 @@ var FlatKeyboard = function(elementName) {
     
     this.octave=4;
 
+    this.MIDIEvent=false;
+    this.timerId=false;
+    
     this.key={ };
     this.key={
         "note": ["C", "D", "E", "F", "G", "A", "B", "C+"],
@@ -46,7 +49,7 @@ var FlatKeyboard = function(elementName) {
         }
     }
     this.key["itnl2Key"]["A0"]=21,  this.key["key2Itnl"][21]="A0";
-    this.key["itnl2Key"]["A0#"]=22, this.key["key2Itnl"][22]="A0#";
+    this.key["itnl2Key"]["A#0"]=22, this.key["key2Itnl"][22]="A#0";
     this.key["itnl2Key"]["B0"]=23,  this.key["key2Itnl"][23]="B0";
 };
 
@@ -54,6 +57,49 @@ FlatKeyboard.prototype={
     setConnected: function() {
         this.connected=true;
     },
+    onmessage: function(midiMsg) {
+        this.onmessageLED();
+        var data={
+            "raw": midiMsg,
+            "msg": midiMsg[0].toString(16),
+            "keyInfo": this.key.key2Itnl[midiMsg[1]]
+        };
+        data.octave=data.keyInfo.substr(data.keyInfo.length-1, 1);
+        data.key=data.keyInfo.substr(0, 1);
+        data.sf=null;
+        switch(data.keyInfo.length.toString()) {
+            case "3":
+            data.sf="#";
+            break;
+        }
+        for(var i=0; i<this.key.note.length; i++) {
+            if(this.key.note[i]==data.key) {
+                data.keyLetter=i.toString();
+                if(data.keyLetter==0 && data.octave==this.octave+1) {
+                    data.keyLetter="7"; // C in 1 octave higher 
+                }
+                if(data.sf=="#") {
+                    data.keyLetter="#"+i.toString();
+                }
+                break;
+            }
+        }
+        if((this.octave==data.octave) || (data.keyLetter=="7" && data.octave==this.octave+1))
+        switch(data.msg.substr(0, 1)) {
+          case "8":
+            for(var i=0; i<this.playKey.length; i++) {
+                if(typeof this.playKey[i] !=="undefined") {
+                    if(this.playKey[i]==data.keyLetter) {
+                        this.playKey.splice(i, 1);
+                    }
+                }
+            }
+            break;
+          case "9":
+            this.playKey.push(data.keyLetter);
+            break;
+        }
+    }, 
     noteOn: function(note) {
         console.log("[Set noteOn Eventhandler] note:", note);
     },
@@ -121,7 +167,6 @@ FlatKeyboard.prototype={
             */
         }
         
-        
 
         // octave display
         this.ctx.fillStyle="#696969";
@@ -133,12 +178,20 @@ FlatKeyboard.prototype={
         this.ctx.fillText("Octave", this.preSet.ctrl+3+0.5, 105+11+0.5);
         this.ctx.font="20px 'Arial'";
         this.ctx.fillText(this.octave, this.preSet.ctrl+48+0.5, 105+25+0.5);
-        // sign on key
+        // sign on control keys
         this.ctx.strokeStyle="#696969";
         this.ctx.font="30px 'Arial'";
         this.ctx.strokeText("-", this.preSet.ctrl+9+0.5, 167+0.5);
         this.ctx.strokeText("+", this.preSet.ctrl+44+0.5, 170+0.5);
-
+        // MIDI Input LED
+        this.ctx.fillStyle="#f5f5f5";
+        if(this.MIDIEvent===true) {
+            this.ctx.fillStyle="#c0c0c0";
+        }
+        fillRoundRect(this.ctx, "fill", 8+0.5, 8+0.5, 15, 5, 2);
+        this.ctx.strokeStyle="#696969";
+        fillRoundRect(this.ctx, "stroke", 8+0.5, 8+0.5, 15, 5, 2);
+        
         // Logo
         this.ctx.fillStyle="#696969";
         this.ctx.font="italic bold 30px 'Verdana'";
@@ -185,9 +238,11 @@ FlatKeyboard.prototype={
                 return;
             }
 
+            self.onmessageLED();
+
             // control key
-            if(keyLetter.substring(0, 4)=="ctrl") {
-                var idx=self.ctrlKey=keyLetter.substring(4,5);
+            if(keyLetter.substr(0, 4)=="ctrl") {
+                var idx=self.ctrlKey=keyLetter.substr(4,1);
                 switch(idx) {
                   case "0":
                     if(self.octave>1) self.octave--;  
@@ -196,36 +251,51 @@ FlatKeyboard.prototype={
                     if(self.octave<7) self.octave++;  
                     break;
                 }
-                return;
-            }
-
-            // noteOn/Off
-            var t=false;
-            for(var i=0; i<self.playKey.length; i++) {
-                if(self.playKey==keyLetter) {
-                    t=true;
-                    break;
+            } else {
+                // noteOn/Off
+                var t=false;
+                for(var i=0; i<self.playKey.length; i++) {
+                    if(self.playKey==keyLetter) {
+                        t=true;
+                        break;
+                    }
+                }
+                if(t===false)  {
+                    self.playKey.push(keyLetter);
+                    var noteNo=convert2KeyNo(keyLetter);
+                    self.noteOn(noteNo);
                 }
             }
-            if(t===false)  {
-                self.playKey.push(keyLetter);
-                var noteNo=convert2KeyNo(keyLetter);
-                self.noteOn(noteNo);
-            }
+
 
         });
         this.canvas.onmouseup=(function(event) {
             if(self.connected===false) {
                 return;
             }
-            for(var i=0; i<self.playKey.length; i++) {
-                if(typeof self.playKey[i] !=="undefined") {
-                    var noteNo=convert2KeyNo(self.playKey[i]);
-                    self.noteOff(noteNo);
+            var rect = event.target.getBoundingClientRect();
+            var keyLetter=checkKey(event, rect);
+            if(keyLetter===false) {
+                return;
+            }
+
+            self.onmessageLED();
+
+            // control key
+            if(keyLetter.substr(0, 4)=="ctrl") {
+                self.ctrlKey=null;
+            } else {
+                // noteOn/Off
+                var noteNo=convert2KeyNo(keyLetter);
+                self.noteOff(noteNo);
+                for(var i=0; i<self.playKey.length; i++) {
+                    if(typeof self.playKey[i] !=="undefined") {
+                        if(self.playKey[i]==keyLetter) {
+                            self.playKey.splice(i, 1);
+                        }
+                    }
                 }
             }
-            self.playKey=[];
-            self.ctrlKey=null;
         });
 
         function convert2KeyNo(keyLetter) {
@@ -278,6 +348,18 @@ FlatKeyboard.prototype={
         }
 
         
+    },
+    onmessageLED: function() {
+        // MIDI Input LED
+        var self=this;
+        if(this.MIDIEvent===false && this.timerId===false) {
+            this.MIDIEvent=true;
+            this.timerId=setTimeout(function() {
+                self.MIDIEvent=false;
+                clearTimeout(self.timerId);
+                self.timerId=false;
+            }, 128);
+        }
     }
 
 
