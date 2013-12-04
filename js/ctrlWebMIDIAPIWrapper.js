@@ -58,6 +58,7 @@ try {
             if(typeof result.event.channel!="undefined") tmp.push("[channel] " + result.event.channel + "<br>");
             if(typeof result.event.ctrlName!="undefined") tmp.push("[ctrlName] " + result.event.ctrlName + "<br>");
             if(typeof result.event.ctrlStatus!="undefined") tmp.push("[ctrlStatus] " + result.event.ctrlStatus + "<br>");
+            if(typeof result.event.programNumber!="undefined") tmp.push("[programNo] " + result.event.programNumber + "<br>");
             if(typeof result.event.valueType!="undefined") tmp.push("[Type] " + result.event.valueType + "<br>");
             if(typeof result.event.noteNumber!="undefined") tmp.push("[noteNum] " + result.event.noteNumber + "<br>");
             if(typeof result.event.velocity!="undefined") tmp.push("[velocity] " + result.event.velocity + "<br>");
