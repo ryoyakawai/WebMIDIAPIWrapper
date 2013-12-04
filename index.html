@@ -9,6 +9,15 @@
   <body>
     <h1>Web MIDI API Wrapper Demo</h1>
     
+    <h2 id="toparsemidi">[TO PARSE MIDI MESSAGE]</h2>
+
+    <div id="parseMIDIMsg">To test parse MIDI message</div>
+    <div id="midiMsgTextBox"></div>
+    <div><div id="result" style="background-color:#efefef; border: 1px solid rgb(175, 175, 175); border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; height: 200px; width: 400px; word-wrap: break-word; overflow: auto; font-family: monospace;"">(Result Area)</textarea></div>
+    <br>
+
+    <h2 id="tosendmidi">[TO SEND MIDI MESSAGE]</h2>
+
     <h3 id="errorText" style="visibility:hidden; color:red; border: 2px solid #ffa500; border-radius:4px;background-color:#fffacd; padding: 5px;"></h3>
 
     <h3 id="devicesText" style="margin:0px; visibility:hidden;">[Select your device]</h3>
@@ -40,15 +49,16 @@
     <br>
     <br>
 
-
     <div id="allOffText" style="visibility:hidden;">Try with difference between AllSoundOff and AllNoteOff with [Fire MIDI (Sustain oneNote)] button.<br>(Suddenly stop with AllSoundOff even sustain and sound reflection, but AllNoteOff does not.) </div>
     <div><span id="sustain2FireButton"></span><span id="sustainvalue"></span></div>
     <div><span id="allNoteOff"></span></div>
     <div><span id="allSndOff"></span></div>    
     <br>
 
+
+
     <hr>
-    <p>Developed by <a href="https://plus.google.com/108242669191458983485" target="_blank">Ryoya KAWAI</a>.</p>
+    <p>Developed by <a href="https://www.google.com/+RyoyaKAWAI" target="_blank">Ryoya KAWAI</a>.</p>
 
     <a href="https://github.com/ryoyakawai/WebMIDIAPIWrapper" target="_new" class="header" style="position: absolute; z-index:2; top: 0; right: 0; border: none;"><img src="images/forkme.png" alt="Fork me on GitHub" border="0"></a>
 

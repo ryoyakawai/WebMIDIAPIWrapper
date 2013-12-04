@@ -1,0 +1,458 @@
+<html>
+  <head>
+    <title>MIDI Message Recieve Test</title>
+  </head>
+  <body>
+
+    <script type="text/javascript" src="./resources/testharness.js"></script>
+    <script type="text/javascript" src="./resources/testharnessreport.js"></script>
+    <style rel="stylesheet" href="./resources/testharness.css"></style>
+
+    <h2>[TEST] method: parseMIDIMessage</h2>
+    <div id="log"></div>
+
+
+    <script type="text/javascript" src="../js/WebMIDIAPIWrapper.js"></script>
+    <script type="text/javascript">
+
+
+    // sysEx
+    var sysExMsg=String("0xf0 0x43 0x79 0x9 0x0 0x50 0x10 0x64 0x20 0x6f 0x2c 0x34 0x20 0x65 0x2c 0x6d 0x27 0x20 0x69 0x2c 0x70 0x20 0x61 0x2c 0x73 0x20 0x6f 0x2c 0x34 0x20 0x61 0x2c 0x73 0x20 0x69 0x2c 0x64 0x20 0x6f 0x0 0xf7").split(" ");
+    var wmaw=new WebMIDIAPIWrapper(true);
+    var out=wmaw.parseMIDIMessage(sysExMsg);
+    test(function(){
+        assert_array_equals("SysEx", out.type);
+    }, "[SysEx] Type=SysEx");
+    test(function(){
+        assert_array_equals(sysExMsg, out.data);
+    }, "[SysEx] data");
+
+
+
+    // 0x80
+    var result={};
+    for(var i=21, ch=0, result={"aType":[], "rType":[], "aSubType":[], "rSubType":[], "aCh":[], "rCh":[], "aNoteNo":[], "rNoteNo":[]}; i<=108; i++) {
+        var wmaw=new WebMIDIAPIWrapper(true);
+        var note="0x"+i.toString(16);
+        var sByte="0x8"+ch.toString(16);
+        var out=wmaw.parseMIDIMessage([sByte, note, 0x7f]);
+        result.aType.push("noteOff");
+        result.rType.push(out.event.subType);
+        result.aCh.push(ch);
+        result.rCh.push(out.event.channel);
+        result.aType.push("channel");
+        result.rType.push(out.event.type);
+        result.aNoteNo.push("0x"+i.toString(16));
+        result.rNoteNo.push(out.event.noteNumber);
+
+        ch++;
+        if(ch>15) ch=0;
+    }
+    test(function(){
+        assert_array_equals(result.aType, result.rType);
+    }, "[NoteOff] Type=channel");
+    test(function(){
+        assert_array_equals(result.aSubType, result.rSubType);
+    }, "[NoteOff] SubType=noteOn");
+    test(function(){
+        assert_array_equals(result.aNoteNo, result.rNoteNo);
+    }, "[NoteOff] Note Numner");
+    test(function(){
+        assert_array_equals(result.aCh, result.rCh);
+    }, "[NoteOff] Channel No");
+
+    // 0x9X
+    var result={};
+    for(var i=21, ch=0, result={"aType":[], "rType":[], "aSubType":[], "rSubType":[], "aCh":[], "rCh":[], "aNoteNo":[], "rNoteNo":[]}; i<=108; i++) {
+        var wmaw=new WebMIDIAPIWrapper(true);
+        var note="0x"+i.toString(16);
+        var sByte="0x9"+ch.toString(16);
+        var out=wmaw.parseMIDIMessage([sByte, note, 0x7f]);
+        result.aType.push("noteOn");
+        result.rType.push(out.event.subType);
+        result.aCh.push(ch);
+        result.rCh.push(out.event.channel);
+        result.aType.push("channel");
+        result.rType.push(out.event.type);
+        result.aNoteNo.push("0x"+i.toString(16));
+        result.rNoteNo.push(out.event.noteNumber);
+
+        ch++;
+        if(ch>15) ch=0;
+    }
+    test(function(){
+        assert_array_equals(result.aType, result.rType);
+    }, "[NoteOn] Type=channel");
+    test(function(){
+        assert_array_equals(result.aSubType, result.rSubType);
+    }, "[NoteOn] SubType=noteOn");
+    test(function(){
+        assert_array_equals(result.aNoteNo, result.rNoteNo);
+    }, "[NoteOn] Note Numner");
+    test(function(){
+        assert_array_equals(result.aCh, result.rCh);
+    }, "[NoteOn] Channel No");
+
+
+
+    // 0x9X (velocity=0x00)
+    var result={};
+    for(var i=21, ch=0, result={"aType":[], "rType":[], "aSubType":[], "rSubType":[], "aCh":[], "rCh":[], "aNoteNo":[], "rNoteNo":[]}; i<=108; i++) {
+        var wmaw=new WebMIDIAPIWrapper(true);
+        var note="0x"+i.toString(16);
+        var sByte="0x9"+ch.toString(16);
+        var out=wmaw.parseMIDIMessage([sByte, note, 0x00]);
+        result.aType.push("noteOff");
+        result.rType.push(out.event.subType);
+        result.aCh.push(ch);
+        result.rCh.push(out.event.channel);
+        result.aType.push("channel");
+        result.rType.push(out.event.type);
+        result.aNoteNo.push("0x"+i.toString(16));
+        result.rNoteNo.push(out.event.noteNumber);
+
+        ch++;
+        if(ch>15) ch=0;
+    }
+    test(function(){
+        assert_array_equals(result.aType, result.rType);
+    }, "[NoteOff(0x9X(velocity=0x00))] Type=channel");
+    test(function(){
+        assert_array_equals(result.aSubType, result.rSubType);
+    }, "[NoteOff(0x9X(velocity=0x00))] SubType=noteOn(velocity=0x00)");
+    test(function(){
+        assert_array_equals(result.aNoteNo, result.rNoteNo);
+    }, "[NoteOff(0x9X(velocity=0x00))] Note Numner");
+    test(function(){
+        assert_array_equals(result.aCh, result.rCh);
+    }, "[NoteOff(0x9X(velocity=0x00))] Channel No");
+
+
+
+    // 0xaX
+    var result={};
+    for(var i=21, ch=0, result={"aType":[], "rType":[], "aSubType":[], "rSubType":[], "aCh":[], "rCh":[], "aNoteNo":[], "rNoteNo":[]}; i<=108; i++) {
+        var wmaw=new WebMIDIAPIWrapper(true);
+        var note="0x"+i.toString(16);
+        var sByte="0xa"+ch.toString(16);
+        var out=wmaw.parseMIDIMessage([sByte, note, 0x00]);
+        result.aType.push("noteAftertouch");
+        result.rType.push(out.event.subType);
+        result.aCh.push(ch);
+        result.rCh.push(out.event.channel);
+        result.aType.push("channel");
+        result.rType.push(out.event.type);
+        result.aNoteNo.push("0x"+i.toString(16));
+        result.rNoteNo.push(out.event.noteNumber);
+
+        ch++;
+        if(ch>15) ch=0;
+    }
+    test(function(){
+        assert_array_equals(result.aType, result.rType);
+    }, "[NoteAfterTouch] Type=channel");
+    test(function(){
+        assert_array_equals(result.aSubType, result.rSubType);
+    }, "[NoteAfterTouch] SubType=noteAftertouch");
+    test(function(){
+        assert_array_equals(result.aNoteNo, result.rNoteNo);
+    }, "[NoteAfterTouch] Note Numner");
+    test(function(){
+        assert_array_equals(result.aCh, result.rCh);
+    }, "[NoteAfterTouch] Channel No");
+
+
+
+    // 0xcX
+    var result={};
+    for(var i=0, ch=0, result={"aType":[], "rType":[], "aSubType":[], "rSubType":[], "aCh":[], "rCh":[], "aVal":[], "rVal":[]}; i<=127; i++) {
+        var wmaw=new WebMIDIAPIWrapper(true);
+        var value="0x"+i.toString(16);
+        var sByte="0xc"+ch.toString(16);
+        var out=wmaw.parseMIDIMessage([sByte, value]);
+        result.aType.push("programChange");
+        result.rType.push(out.event.subType);
+        result.aCh.push(ch);
+        result.rCh.push(out.event.channel);
+        result.aType.push("channel");
+        result.rType.push(out.event.type);
+        result.aVal.push(value);
+        result.rVal.push(out.event.programNumber);
+
+        ch++;
+        if(ch>15) ch=0;
+    }
+    test(function(){
+        assert_array_equals(result.aType, result.rType);
+    }, "[programChange] Type=channel");
+    test(function(){
+        assert_array_equals(result.aSubType, result.rSubType);
+    }, "[programChange] SubType=noteAftertouch");
+    test(function(){
+        assert_array_equals(result.aCh, result.rCh);
+    }, "[programChange] Channel No");
+    test(function(){
+        assert_array_equals(result.aVal, result.rVal);
+    }, "[programChange] number");
+
+
+    // 0xdX
+    var result={};
+    for(var i=0, ch=0, result={"aType":[], "rType":[], "aSubType":[], "rSubType":[], "aCh":[], "rCh":[]}; i<=127; i++) {
+        var wmaw=new WebMIDIAPIWrapper(true);
+        var sByte="0xd"+ch.toString(16);
+        var out=wmaw.parseMIDIMessage([sByte, value]);
+        result.aType.push("channelAftertouch");
+        result.rType.push(out.event.subType);
+        result.aCh.push(ch);
+        result.rCh.push(out.event.channel);
+        result.aType.push("channel");
+        result.rType.push(out.event.type);
+
+        ch++;
+        if(ch>15) ch=0;
+    }
+    test(function(){
+        assert_array_equals(result.aType, result.rType);
+    }, "[channelAftertouch] Type=channel");
+    test(function(){
+        assert_array_equals(result.aSubType, result.rSubType);
+    }, "[channelAftertouch] SubType=noteAftertouch");
+    test(function(){
+        assert_array_equals(result.aCh, result.rCh);
+    }, "[channelAftertouch] Channel No");
+
+
+    // 0xeX
+    var result={};
+    for(var i=-8191, ch=0, result={"aType":[], "rType":[], "aSubType":[], "rSubType":[], "aCh":[], "rCh":[], "aVal":[], "rVal":[]}, msb, lsb; i<8192; i++) {
+        var wmaw=new WebMIDIAPIWrapper(true);
+        var sByte="0xe"+ch.toString(16);
+        if(i<0) {
+            msb=(~i>>7) + 64;
+            lsb=(~i) % 128;
+        } else {
+            msb=(i>>7);
+            lsb=(i%128);
+        }
+        
+        var out=wmaw.parseMIDIMessage([sByte, lsb, msb]);
+        result.aType.push("pitchBend");
+        result.rType.push(out.event.subType);
+        result.aCh.push(ch);
+        result.rCh.push(out.event.channel);
+        result.aType.push("channel");
+        result.rType.push(out.event.type);
+        result.aVal.push(i);
+        result.rVal.push(out.event.value);
+        ch++;
+        if(ch>15) ch=0;
+    }
+    test(function(){
+        assert_array_equals(result.aType, result.rType);
+    }, "[pitchBend] Type=channel");
+    test(function(){
+        assert_array_equals(result.aSubType, result.rSubType);
+    }, "[pitchBend] SubType=pitchBend");
+    test(function(){
+        assert_array_equals(result.aCh, result.rCh);
+    }, "[pitchBend] Channel No");
+    test(function(){
+        assert_array_equals(result.aVal, result.rVal);
+    }, "[pitchBend] Value");
+
+
+
+    var CCTestList=[
+        {"title": "[ControlChange:BankSelect(MSB)]", "ctrlType": "BankSelect", "ccNo":0x00, "valType": "MSB"},
+        {"title": "[ControlChange:BankSelect(LSB)]", "ctrlType": "BankSelect", "ccNo":0x20, "valType": "LSB"},
+        {"title": "[ControlChange:Modulation(MSB)]", "ctrlType": "Modulation", "ccNo":0x01, "valType": "MSB"},
+        {"title": "[ControlChange:Modulation(LSB)]", "ctrlType": "Modulation", "ccNo":0x21, "valType": "LSB"},
+        {"title": "[ControlChange:Portament(MSB)]", "ctrlType": "Portament", "ccNo":0x05, "valType": "MSB"},
+        {"title": "[ControlChange:Portament(LSB)]", "ctrlType": "Portament", "ccNo":0x25, "valType": "LSB"},
+        {"title": "[ControlChange:DataEntry(MSB)]", "ctrlType": "DataEntry", "ccNo":0x06, "valType": "MSB"},
+        {"title": "[ControlChange:DataEntry(LSB)]", "ctrlType": "DataEntry", "ccNo":0x26, "valType": "LSB"},
+        {"title": "[ControlChange:MainVolume(MSB)]", "ctrlType": "MainVolume", "ccNo":0x07, "valType": "MSB"},
+        {"title": "[ControlChange:MainVolume(LSB)]", "ctrlType": "MainVolume", "ccNo":0x27, "valType": "LSB"},
+        {"title": "[ControlChange:PanPot(MSB)]", "ctrlType": "PanPot", "ccNo":0x10, "valType": "MSB"},
+        {"title": "[ControlChange:PanPot(LSB)]", "ctrlType": "PanPot", "ccNo":0x2a, "valType": "LSB"},
+        {"title": "[ControlChange:Expression(MSB)]", "ctrlType": "Expression", "ccNo":0x11, "valType": "MSB"},
+        {"title": "[ControlChange:Expression(LSB)]", "ctrlType": "Expression", "ccNo":0x2b, "valType": "LSB"},
+        {"title": "[ControlChange:NRPN(LSB)]", "ctrlType": "NRPN", "ccNo":0x62, "valType": "LSB"},
+        {"title": "[ControlChange:NRPN(MSB)]", "ctrlType": "NRPN", "ccNo":0x63, "valType": "MSB"},
+        {"title": "[ControlChange:RPN(LSB)]", "ctrlType": "RPN", "ccNo":0x64, "valType": "LSB"},
+        {"title": "[ControlChange:RPN(MSB)]", "ctrlType": "RPN", "ccNo":0x65, "valType": "MSB"}
+    ]
+    for(var ci=0; ci<CCTestList.length; ci++) {
+        var result={};
+        for(var i=0, ch=0, result={"aType":[], "rType":[], "aValType":[], "rValType":[],"aSubType":[], "rSubType":[], "aCh":[], "rCh":[], "aVal":[], "rVal":[], "aCtrlType":[], "rCtrlType":[]}; i<16; i++) {
+            var wmaw=new WebMIDIAPIWrapper(true);
+            var sByte="0xb"+ch.toString(16);
+            var ccNo=CCTestList[ci].ccNo;
+            var value=0x45;
+            var out=wmaw.parseMIDIMessage([sByte, ccNo, value]);
+            result.aCtrlType.push(CCTestList[ci].ctrlType);
+            result.rCtrlType.push(out.event.ctrlName);
+            result.aType.push("controller");
+            result.rType.push(out.event.subType);
+            result.aValType.push(CCTestList[ci].valType);
+            result.rValType.push(out.event.valueType);
+            result.aCh.push(ch);
+            result.rCh.push(out.event.channel);
+            result.aVal.push(value);
+            result.rVal.push(out.event.value);
+            ch++;
+            if(ch>15) ch=0;
+        }
+        test(function(){
+            assert_array_equals(result.aType, result.rType);
+        }, CCTestList[ci].title + " Type:Controller");
+        test(function(){
+            assert_array_equals(result.aValType, result.rValType);
+        }, CCTestList[ci].title + " ValueType:");
+        test(function(){
+            assert_array_equals(result.aCh, result.rCh);
+        }, CCTestList[ci].title + " Channel No");
+        test(function(){
+            assert_array_equals(result.aVal, result.rVal);
+        }, CCTestList[ci].title + " Value");
+        test(function(){
+            assert_array_equals(result.aCtrlType, result.rCtrlType);
+        }, CCTestList[ci].title + " ctrlName");
+        
+    }
+
+
+    var CCTestList=[
+        {"title": "[ControlChange:Hold", "ctrlType": "Hold", "ccNo":0x40},
+        {"title": "[ControlChange:Portament", "ctrlType": "Portament", "ccNo":0x41},
+        {"title": "[ControlChange:SosTenuto", "ctrlType": "SosTenuto", "ccNo":0x42},
+        {"title": "[ControlChange:SoftPedal", "ctrlType": "SoftPedal", "ccNo":0x43},
+    ]
+    for(var ci=0; ci<CCTestList.length; ci++) {
+        for(var i=0, ch=0, result={"aType":[], "rType":[], "aValType":[], "rValType":[],"aSubType":[], "rSubType":[], "aCh":[], "rCh":[], "aVal":[], "rVal":[], "aCtrlType":[], "rCtrlType":[], "aCtrlStatus":[], "rCtrlStatus":[]}; i<128; i++) {
+            var wmaw=new WebMIDIAPIWrapper(true);
+            var ch=Math.floor(Math.random()*15);
+            var sByte="0xb"+ch.toString(16);
+            var ccNo=CCTestList[ci].ccNo;
+            var value=Math.floor(Math.random()*127);
+            var out=wmaw.parseMIDIMessage([sByte, ccNo, value]);
+            result.aCtrlType.push(CCTestList[ci].ctrlType);
+            result.rCtrlType.push(out.event.ctrlName);
+            result.aType.push("controller");
+            result.rType.push(out.event.subType);
+            result.aValType.push(CCTestList[ci].valType);
+            result.rValType.push(out.event.valueType);
+            result.aCh.push(ch);
+            result.rCh.push(out.event.channel);
+            result.aVal.push(value);
+            result.rVal.push(out.event.value);
+            var ctrlStatus="Off";
+            if(value>=0x40) ctrlStatus="On";
+            result.aCtrlStatus.push(ctrlStatus);
+            result.rCtrlStatus.push(out.event.ctrlStatus);
+        }
+        test(function(){
+            assert_array_equals(result.aType, result.rType);
+        }, CCTestList[ci].title + " Type:Controller");
+        test(function(){
+            assert_array_equals(result.aValType, result.rValType);
+        }, CCTestList[ci].title + " ValueType:");
+        test(function(){
+            assert_array_equals(result.aCh, result.rCh);
+        }, CCTestList[ci].title + " Channel No");
+        test(function(){
+            assert_array_equals(result.aVal, result.rVal);
+        }, CCTestList[ci].title + " Value");
+        test(function(){
+            assert_array_equals(result.aCtrlType, result.rCtrlType);
+        }, CCTestList[ci].title + " ctrlName");
+        test(function(){
+            assert_array_equals(result.aCtrlStatus, result.rCtrlStatus);
+        }, CCTestList[ci].title + " ctrlStatus");
+        
+    }
+
+    var CCTestList=[
+        {"title": "[ControlChange:SoundController1", "ctrlType": "SoundController1", "ccNo":0x46},
+        {"title": "[ControlChange:SoundController2", "ctrlType": "SoundController2", "ccNo":0x47},
+        {"title": "[ControlChange:SoundController3", "ctrlType": "SoundController3", "ccNo":0x48},
+        {"title": "[ControlChange:SoundController4", "ctrlType": "SoundController4", "ccNo":0x49},
+        {"title": "[ControlChange:SoundController5", "ctrlType": "SoundController5", "ccNo":0x50},
+        {"title": "[ControlChange:effectSendLeven1", "ctrlType": "effectSendLevel1", "ccNo":0x5b},
+        {"title": "[ControlChange:effectSendLeven3", "ctrlType": "effectSendLevel3", "ccNo":0x5d},
+        {"title": "[ControlChange:effectSendLeven4", "ctrlType": "effectSendLevel4", "ccNo":0x5e},
+        {"title": "[ControlChange:DataIncrement", "ctrlType": "DataIncrement", "ccNo":0x60},
+        {"title": "[ControlChange:DataDecrement", "ctrlType": "DataDecrement", "ccNo":0x61},
+        {"title": "[ControlChange:AllSoundOff", "ctrlType": "AllSoundOff", "ccNo":0x78},
+        {"title": "[ControlChange:ReestAllController", "ctrlType": "ResetAllController", "ccNo":0x79},
+        {"title": "[ControlChange:omniOff", "ctrlType": "OmniOff", "ccNo":0x7b},
+        {"title": "[ControlChange:omniOf", "ctrlType": "OmniOn", "ccNo":0x7c},
+        {"title": "[ControlChange:Mono", "ctrlType": "Mono", "ccNo":0x7e},
+        {"title": "[ControlChange:Poly", "ctrlType": "Poly", "ccNo":0x7f},
+    ]
+    for(var ci=0; ci<CCTestList.length; ci++) {
+        for(var i=0, ch=0, result={"aType":[], "rType":[], "aValType":[], "rValType":[],"aSubType":[], "rSubType":[], "aCh":[], "rCh":[], "aVal":[], "rVal":[], "aCtrlType":[], "rCtrlType":[]}; i<128; i++) {
+            var wmaw=new WebMIDIAPIWrapper(true);
+            var ch=Math.floor(Math.random()*15);
+            var sByte="0xb"+ch.toString(16);
+            var ccNo=CCTestList[ci].ccNo;
+            var value=Math.floor(Math.random()*127);
+            var out=wmaw.parseMIDIMessage([sByte, ccNo, value]);
+            result.aCtrlType.push(CCTestList[ci].ctrlType);
+            result.rCtrlType.push(out.event.ctrlName);
+            result.aType.push("controller");
+            result.rType.push(out.event.subType);
+            result.aValType.push(CCTestList[ci].valType);
+            result.rValType.push(out.event.valueType);
+            result.aCh.push(ch);
+            result.rCh.push(out.event.channel);
+            result.aVal.push(value);
+            result.rVal.push(out.event.value);
+        }
+        test(function(){
+            assert_array_equals(result.aType, result.rType);
+        }, CCTestList[ci].title + " Type:Controller");
+        test(function(){
+            assert_array_equals(result.aValType, result.rValType);
+        }, CCTestList[ci].title + " ValueType:");
+        test(function(){
+            assert_array_equals(result.aCh, result.rCh);
+        }, CCTestList[ci].title + " Channel No");
+        test(function(){
+            assert_array_equals(result.aVal, result.rVal);
+        }, CCTestList[ci].title + " Value");
+        test(function(){
+            assert_array_equals(result.aCtrlType, result.rCtrlType);
+        }, CCTestList[ci].title + " ctrlName");
+        
+    }
+
+ 
+
+
+
+
+
+
+
+
+
+    function ecb(event) {
+        console.log(event);
+    }
+
+    var stTest = async_test("Testing setTimeout()");
+    setTimeout(function () {
+        stTest.step(function () {
+            assert_true(true, "Truth is asynchronously true.");
+        });
+        stTest.done();
+    }, 10);
+    </script>
+
+    <br>
+    <br>
+    <br>
+  </body>
+</html>

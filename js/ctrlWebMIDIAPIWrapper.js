@@ -25,6 +25,59 @@ try {
     var timerId;
     var disp=false;
     var fKey = new FlatKeyboard("keyboard");
+
+    // to parse midi message
+    var parseMIDIInput=document.createElement("input");
+    parseMIDIInput.id="midiMsg";
+    parseMIDIInput.size="50";
+    parseMIDIInput.style.setProperty("border-radius", "4px");
+    parseMIDIInput.value="0x90 0x4f 0x7f";
+    var parseMIDIInputB=document.createElement("input");
+    parseMIDIInputB.id="midiMsgB"; parseMIDIInputB.type="button";
+    parseMIDIInputB.value="Parse MIDI Message";
+    document.querySelector("#midiMsgTextBox").appendChild(parseMIDIInput);
+    document.querySelector("#midiMsgTextBox").appendChild(parseMIDIInputB);
+    document.querySelector("#midiMsgB").addEventListener("click", function(){
+        var midiMsg=document.querySelector("#midiMsg").value;
+        if(midiMsg=="") {
+            document.querySelector("#midiMsg").style.setProperty("border", "2px solid #dc143c");
+            document.querySelector("#midiMsg").style.setProperty("background-color", "#db99a6");
+            setTimeout(function(){
+                document.querySelector("#midiMsg").style.removeProperty("border");
+                document.querySelector("#midiMsg").style.removeProperty("background-color");
+            }, 400);
+        } else {
+            var mm=midiMsg.split(" ");
+            for(var i=0; i<mm.length; i++) {
+                mm[i]=parseInt(mm[i], 16);
+            }
+            var result=wmaw.parseMIDIMessage(mm);
+            var dispResult="", tmp=[];
+            if(typeof result.type!="undefined") tmp.push("[Type] " + result.type + "<br>");
+            if(typeof result.subType!="undefined") tmp.push("[subType] " + result.subType + "<br>");
+            if(typeof result.event.channel!="undefined") tmp.push("[channel] " + result.event.channel + "<br>");
+            if(typeof result.event.ctrlName!="undefined") tmp.push("[ctrlName] " + result.event.ctrlName + "<br>");
+            if(typeof result.event.ctrlStatus!="undefined") tmp.push("[ctrlStatus] " + result.event.ctrlStatus + "<br>");
+            if(typeof result.event.valueType!="undefined") tmp.push("[Type] " + result.event.valueType + "<br>");
+            if(typeof result.event.noteNumber!="undefined") tmp.push("[noteNum] " + result.event.noteNumber + "<br>");
+            if(typeof result.event.velocity!="undefined") tmp.push("[velocity] " + result.event.velocity + "<br>");
+            if(typeof result.event.value!="undefined") tmp.push("[value] " + result.event.value + "<br>");
+            if(typeof result.event.amount!="undefined") tmp.push("[amount] " + result.event.amount + "<br>");
+            console.log(result);
+            var raw="";
+            for(var i=0; i<result.data.length; i++) {
+                raw = raw + " " + "0x" + result.data[i].toString(16);
+            }
+            tmp.push("[raw] " + raw);
+            
+            for(var i=0; i<tmp.length; i++) {
+                dispResult=dispResult + tmp[i];
+            }
+            document.querySelector("#result").innerHTML=dispResult;
+            //console.log(result, dispResult);
+        }
+    });
+    
     
     wmaw.setMidiInputSelect=function() {
         var miButton=document.createElement("input"); // mi: midi input
@@ -47,8 +100,8 @@ try {
                     wmaw.ports.out[0].send([event.data[0], event.data[1], event.data[2]]);
                 }
                 fKey.onmessage(event.data);
+                wmaw.parseInputMessage(event.data);
             }
-
             wmaw.setMidiInputToPort(selIdx, 0, onmidimessage);
         });
         
@@ -216,6 +269,7 @@ try {
                     }, 50);
                     
                 });  
+
                 
                 var fireTri = document.createElement("input");
                 fireTri.id="fireSustain"; fireTri.type="button"; 
@@ -262,6 +316,7 @@ try {
                     wmaw.sendAllSoundOff(0, 0, 0);
                 });
 
+                
                 var allNoteOff = document.createElement("input");
                 allNoteOff.id="allSnfOff"; allNoteOff.type="button"; 
                 allNoteOff.value="AllNoteOff";
