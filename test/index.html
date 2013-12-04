@@ -428,27 +428,10 @@
         
     }
 
- 
-
-
-
-
-
-
-
-
-
     function ecb(event) {
         console.log(event);
     }
 
-    var stTest = async_test("Testing setTimeout()");
-    setTimeout(function () {
-        stTest.step(function () {
-            assert_true(true, "Truth is asynchronously true.");
-        });
-        stTest.done();
-    }, 10);
     </script>
 
     <br>
