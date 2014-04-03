@@ -132,10 +132,12 @@ try {
                 }, 80);
                 fKey.setConnected();
                 fKey.noteOn=function(noteNo) {
-                    wmaw.sendNoteOn(0, 0, noteNo, 127, 0);
+                    var ch=document.querySelector("#changeChValue").value-1;;
+                    wmaw.sendNoteOn(0, ch, noteNo, 127, 0);
                 };
                 fKey.noteOff=function(noteNo) {
-                    wmaw.sendNoteOff(0, 0, noteNo, 127, 0);
+                    var ch=document.querySelector("#changeChValue").value-1;;
+                    wmaw.sendNoteOff(0, ch, noteNo, 127, 0);
                 };
 
                 var selIdx=document.getElementById("midioutlist").value;
@@ -147,21 +149,22 @@ try {
                 document.getElementById("midiFireButton").appendChild(fireMidi);
                 document.getElementById("fireMidi").addEventListener("click", function() {
                     wmaw.initializePerformanceNow();
+                    var ch=document.querySelector("#changeChValue").value-1;;
                 
-                    wmaw.sendNoteOn(0, 0, 72, 60, 0);
-                    wmaw.sendNoteOff(0, 0, 72, 60, 500);
+                    wmaw.sendNoteOn(0, ch, 72, 60, 0);
+                    wmaw.sendNoteOff(0, ch, 72, 60, 500);
                     
-                    wmaw.sendNoteOn(0, 0, 74, 80, 500);
-                    wmaw.sendNoteOff(0, 0, 74, 80, 1000);
+                    wmaw.sendNoteOn(0, ch, 74, 80, 500);
+                    wmaw.sendNoteOff(0, ch, 74, 80, 1000);
                     
-                    wmaw.sendNoteOn(0, 0, 76, 100, 1000);
-                    wmaw.sendNoteOff(0, 0, 76, 100, 1500);
+                    wmaw.sendNoteOn(0, ch, 76, 100, 1000);
+                    wmaw.sendNoteOff(0, ch, 76, 100, 1500);
                     
-                    wmaw.sendNoteOn(0, 0, 77, 120, 1500);
-                    wmaw.sendNoteOff(0, 0, 77, 120, 2000);
+                    wmaw.sendNoteOn(0, ch, 77, 120, 1500);
+                    wmaw.sendNoteOff(0, ch, 77, 120, 2000);
                     
-                    wmaw.sendNoteOn(0, 0, 79, 127, 2000);
-                    wmaw.sendNoteOff(0, 0, 79, 127, 2500);
+                    wmaw.sendNoteOn(0, ch, 79, 127, 2000);
+                    wmaw.sendNoteOff(0, ch, 79, 127, 2500);
                     
                 });
             
@@ -171,24 +174,26 @@ try {
                 document.getElementById("sustainFireButton").appendChild(fireSustain);
                 document.getElementById("fireSustain").addEventListener("click", function() {
                     wmaw.initializePerformanceNow();
+
+                    var ch=document.querySelector("#changeChValue").value-1;;
                     
-                    wmaw.sendSustainStatus(0, 0, "on", 0);
-                    wmaw.sendSustainStatus(0, 0, "off", 2500);
+                    wmaw.sendSustainStatus(0, ch, "on", 0);
+                    wmaw.sendSustainStatus(0, ch, "off", 2500);
                     
-                    wmaw.sendNoteOn(0, 0, 72, 60, 0);
-                    wmaw.sendNoteOff(0, 0, 72, 60, 500);
+                    wmaw.sendNoteOn(0, ch, 72, 60, 0);
+                    wmaw.sendNoteOff(0, ch, 72, 60, 500);
                     
-                    wmaw.sendNoteOn(0, 0, 74, 80, 500);
-                    wmaw.sendNoteOff(0, 0, 74, 80, 1000);
+                    wmaw.sendNoteOn(0, ch, 74, 80, 500);
+                    wmaw.sendNoteOff(0, ch, 74, 80, 1000);
                     
-                    wmaw.sendNoteOn(0, 0, 76, 100, 1000);
-                    wmaw.sendNoteOff(0, 0, 76, 100, 1500);
+                    wmaw.sendNoteOn(0, ch, 76, 100, 1000);
+                    wmaw.sendNoteOff(0, ch, 76, 100, 1500);
                     
-                    wmaw.sendNoteOn(0, 0, 77, 120, 1500);
-                    wmaw.sendNoteOff(0, 0, 77, 120, 2000);
+                    wmaw.sendNoteOn(0, ch, 77, 120, 1500);
+                    wmaw.sendNoteOff(0, ch, 77, 120, 2000);
                     
-                    wmaw.sendNoteOn(0, 0, 79, 127, 2000);
-                    wmaw.sendNoteOff(0, 0, 79, 127, 2500);
+                    wmaw.sendNoteOn(0, ch, 79, 127, 2000);
+                    wmaw.sendNoteOff(0, ch, 79, 127, 2500);
                 });
                 
                 
@@ -199,8 +204,9 @@ try {
                 document.getElementById("fireBend").addEventListener("click", function() {
                     wmaw.setPitchBendValue(0, 0, 16384, 8192);
                     //wmaw.sendProgramChange(0, 0, 30, 0);
+                    var ch=document.querySelector("#changeChValue").value-1;;
                     
-                    wmaw.sendNoteOn(0, 0, 72, 120, 0);
+                    wmaw.sendNoteOn(0, ch, 72, 120, 0);
                     var val=wmaw.ports.out[0].pitchBendValue.center;
                     var d=1;
                     var t=null;
@@ -213,10 +219,11 @@ try {
                             t=false;
                         }                
                         val = val + d*128;
-                        wmaw.sendPitchBend(0, 0, val, 0);
+                        var ch=document.querySelector("#changeChValue").value-1;;
+                        wmaw.sendPitchBend(0, ch, val, 0);
                         if(t==false) {
-                            wmaw.sendNoteOff(0, 0, 72, 120, 0);
-                            wmaw.sendPitchBend(0, 0, wmaw.ports.out[0].pitchBendValue.center, 0);
+                            wmaw.sendNoteOff(0, ch, 72, 120, 0);
+                            wmaw.sendPitchBend(0, ch, wmaw.ports.out[0].pitchBendValue.center, 0);
                         }
                         document.getElementById("bendvalue").innerHTML=val;
                     }, 10);
@@ -228,17 +235,27 @@ try {
                 prgChange.style.setProperty("width", "200px");
                 prgChange.addEventListener("change", function() {
                     document.getElementById("voicename").innerHTML=this.value+". "+voiceList.getGMVoiceName("instruments", this.value);
-                    wmaw.sendProgramChange(0, 0, this.value, 0);
+                    var ch=document.querySelector("#changeChValue").value-1;;
+                    wmaw.sendProgramChange(0, ch, this.value, 0);
                     config.programNo=this.value;
                 });
                 document.getElementById("prgChange").appendChild(prgChange);
-                document.getElementById("prgChange").style.setProperty("margin", "100px 0px 0px 0px");
                 document.getElementById("voicename").innerHTML="0. "+voiceList.getGMVoiceName("instruments", 0);
                 document.getElementById("prgChange").appendChild(prgChange);
                 document.getElementById("prgChangeText").style.removeProperty("visibility");
                 document.getElementById("prgChangeText01").style.removeProperty("visibility");
                 document.getElementById("prgChangeText02").style.removeProperty("visibility");
                 
+                var changeCh = document.createElement("input");
+                changeCh.id="changeChValue"; changeCh.type="number"; 
+                changeCh.style.setProperty("width", "40px");
+                changeCh.min=1, changeCh.max=16, changeCh.value=1;
+                document.getElementById("changeCh").appendChild(changeCh);
+                document.getElementById("changeCh").style.setProperty("padding", "3px");
+                document.getElementById("changeCh").style.setProperty("margin", "0px 0px 10px 0px");
+                document.getElementById("control").style.removeProperty("visibility");
+
+
                 var fireMod = document.createElement("input");
                 fireMod.id="fireMod"; fireMod.type="button"; 
                 fireMod.value="Fire MIDI (Mod)";
@@ -247,7 +264,9 @@ try {
                     wmaw.setPitchBendValue(0, 0, 16384, 8192);
                     //wmaw.sendProgramChange(0, 0, 34, 0);
                     
-                    wmaw.sendNoteOn(0, 0, 72, 120, 0);
+                    var ch=document.querySelector("#changeChValue").value-1;;
+
+                    wmaw.sendNoteOn(0, ch, 72, 120, 0);
                     var val=0;
                     var d=1;
                     var t=null;
@@ -260,12 +279,12 @@ try {
                             t=false;
                         }
                         if(t==false) {
-                            wmaw.sendNoteOff(0, 0, 72, 120, 0);
+                            wmaw.sendNoteOff(0, ch, 72, 120, 0);
                             val=0;
                         } else {
                             val=val+d*2;
                         }
-                        wmaw.sendModulationValue(0, 0, val, 0);
+                        wmaw.sendModulationValue(0, ch, val, 0);
                         document.getElementById("modvalue").innerHTML=val;
                     }, 50);
                     
@@ -279,17 +298,20 @@ try {
                 document.getElementById("fireTriText").style.removeProperty("visibility");
                 document.getElementById("fireTri").addEventListener("click", function() {
                     wmaw.initializePerformanceNow();
-                    wmaw.sendProgramChange(0, 0, 12, 0);
-                    wmaw.sendProgramChange(0, 0, config.programNo, 370);
+
+                    var ch=document.querySelector("#changeChValue").value-1;;
+
+                    wmaw.sendProgramChange(0, ch, 12, 0);
+                    wmaw.sendProgramChange(0, ch, config.programNo, 370);
                     
-                    wmaw.sendNoteOn(0, 0, 62, 127, 0);
-                    wmaw.sendNoteOff(0, 0, 62, 0, 120);
+                    wmaw.sendNoteOn(0, ch, 62, 127, 0);
+                    wmaw.sendNoteOff(0, ch, 62, 0, 120);
                     
-                    wmaw.sendNoteOn(0, 0, 69, 127, 120);
-                    wmaw.sendNoteOff(0, 0, 69, 0, 240);
+                    wmaw.sendNoteOn(0, ch, 69, 127, 120);
+                    wmaw.sendNoteOff(0, ch, 69, 0, 240);
                     
-                    wmaw.sendNoteOn(0, 0, 74, 127, 240);
-                    wmaw.sendNoteOff(0, 0, 74, 0, 360);
+                    wmaw.sendNoteOn(0, ch, 74, 127, 240);
+                    wmaw.sendNoteOff(0, ch, 74, 0, 360);
                     
                 });
                 
@@ -299,12 +321,14 @@ try {
                 document.getElementById("sustain2FireButton").appendChild(fireSustain2);
                 document.getElementById("fireSustain2").addEventListener("click", function() {
                     wmaw.initializePerformanceNow();
+
+                    var ch=document.querySelector("#changeChValue").value-1;;
                     
-                    wmaw.sendSustainStatus(0, 0, "on", 0);
-                    wmaw.sendSustainStatus(0, 0, "off", 5000);
+                    wmaw.sendSustainStatus(0, ch, "on", 0);
+                    wmaw.sendSustainStatus(0, ch, "off", 5000);
                     
-                    wmaw.sendNoteOn(0, 0, 72, 127, 0);
-                    wmaw.sendNoteOff(0, 0, 72, 127, 5000);
+                    wmaw.sendNoteOn(0, ch, 72, 127, 0);
+                    wmaw.sendNoteOff(0, ch, 72, 127, 5000);
                 });
                 
                 document.getElementById("allOffText").style.removeProperty("visibility");
@@ -314,7 +338,9 @@ try {
                 document.getElementById("allSndOff").appendChild(allSndOff);
                 document.getElementById("allSndOff").addEventListener("click", function() {
                     wmaw.initializePerformanceNow();
-                    wmaw.sendAllSoundOff(0, 0, 0);
+                    for(var i=0; i<16; i++) {
+                        wmaw.sendAllSoundOff(0, i, 0);
+                    }
                 });
 
                 
@@ -334,21 +360,24 @@ try {
                 document.getElementById("sendRaw").appendChild(sendRaw);
                 document.getElementById("sendRaw").addEventListener("click", function() {
                     wmaw.initializePerformanceNow();
+                    var ch=document.querySelector("#changeChValue").value-1;;
+                    var chH=ch.toString(16);
+                    console.log(chH);
                     
-                    wmaw.sendRaw(0, [0x90, 72, 60], 0);
-                    wmaw.sendRaw(0, [0x80, 72, 60], 500);
+                    wmaw.sendRaw(0, ["0x9"+chH, 72, 60], 0);
+                    wmaw.sendRaw(0, ["0x8"+chH, 72, 60], 500);
                     
-                    wmaw.sendRaw(0, [0x90, 74, 80], 500);
-                    wmaw.sendRaw(0, [0x80, 74, 80], 1000);
+                    wmaw.sendRaw(0, ["0x9"+chH, 74, 80], 500);
+                    wmaw.sendRaw(0, ["0x8"+chH, 74, 80], 1000);
                     
-                    wmaw.sendRaw(0, [0x90, 76, 100], 1000);
-                    wmaw.sendRaw(0, [0x80, 76, 100], 1500);
+                    wmaw.sendRaw(0, ["0x9"+chH, 76, 100], 1000);
+                    wmaw.sendRaw(0, ["0x8"+chH, 76, 100], 1500);
                     
-                    wmaw.sendRaw(0, [0x90, 77, 120], 1500);
-                    wmaw.sendRaw(0, [0x80, 77, 120], 2000);
+                    wmaw.sendRaw(0, ["0x9"+chH, 77, 120], 1500);
+                    wmaw.sendRaw(0, ["0x8"+chH, 77, 120], 2000);
                     
-                    wmaw.sendRaw(0, [0x90, 79, 127], 2000);
-                    wmaw.sendRaw(0, [0x80, 79, 127], 2500);
+                    wmaw.sendRaw(0, ["0x9"+chH, 79, 127], 2000);
+                    wmaw.sendRaw(0, ["0x8"+chH, 79, 127], 2500);
                     
                 });
             }
