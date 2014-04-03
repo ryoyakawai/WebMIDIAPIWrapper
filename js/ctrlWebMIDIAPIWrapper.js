@@ -97,11 +97,13 @@ try {
             var selIdx=document.getElementById("midiinlist").value;
             function onmidimessage(event) {
                 var midimsg0=event.data[0].toString(16), midimsg1=event.data[1].toString(16), midimsg2=event.data[2].toString(16);
+                var ch=document.querySelector("#changeChValue").value-1;;
+                var sb="0x"+midimsg0.substr(0, 1) + ch;
                 if(typeof wmaw.ports.out[0]==="object") {
-                    wmaw.ports.out[0].send([event.data[0], event.data[1], event.data[2]]);
+                    wmaw.ports.out[0].send([sb, event.data[1], event.data[2]]);
                 }
                 fKey.onmessage(event.data);
-                wmaw.parseInputMessage(event.data);
+                wmaw.parseMIDIMessage([sb, event.data[1], event.data[2]]);
             }
             wmaw.setMidiInputToPort(selIdx, 0, onmidimessage);
         });
