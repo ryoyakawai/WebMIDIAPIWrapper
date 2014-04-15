@@ -1,7 +1,7 @@
 # Web MIDI API Wrapper
 
 ## Live Demo
-[https://dl.dropboxusercontent.com/u/695740/WebMIDIAPIWrapper/index.html](https://dl.dropboxusercontent.com/u/695740/WebMIDIAPIWrapper/index.html)
+[http://ryoyakawai.github.io/WebMIDIAPIWrapper/](http://ryoyakawai.github.io/WebMIDIAPIWrapper/)
 
  - Mac users: Select "Apple DLS Synth (0.Apple DLS Synth)" for output device.
  - Windows users: Select "Microsoft GS Wavetable Synth (0.Microsoft GS Wavetable Synth)" for output device.
