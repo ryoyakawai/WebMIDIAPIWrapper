@@ -44,7 +44,6 @@ WebMIDIAPIWrapper.prototype = {
             for (var o = outputIterator.next(); !o.done; o = outputIterator.next()) {
                 this.devices.outputs.push(o.value);
             }
-        console.log(this.devices);
         }
 
         this.setMidiInputSelect.bind(this)();
