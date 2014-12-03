@@ -29,8 +29,24 @@ WebMIDIAPIWrapper.prototype = {
     },
     scb: function(access) {
         this.midiAccess = access;
-        this.devices.inputs=this.midiAccess.inputs();
-        this.devices.outputs=this.midiAccess.outputs();
+        
+        if (typeof this.midiAccess.inputs === "function") {
+            this.devices.inputs=this.midiAccess.inputs();
+            this.devices.outputs=this.midiAccess.outputs();
+        } else {
+            var inputIterator = this.midiAccess.inputs.values();
+            this.devices.inputs = [];
+            for (var o = inputIterator.next(); !o.done; o = inputIterator.next()) {
+                this.devices.inputs.push(o.value);
+            }
+            var outputIterator = this.midiAccess.outputs.values();
+            this.devices.outputs = [];
+            for (var o = outputIterator.next(); !o.done; o = outputIterator.next()) {
+                this.devices.outputs.push(o.value);
+            }
+        console.log(this.devices);
+        }
+
         this.setMidiInputSelect.bind(this)();
         this.setMidiOutputSelect.bind(this)();
         console.log("[OutputDevices] ", this.devices.outputs, "[InputDevices]", this.devices.inputs);
