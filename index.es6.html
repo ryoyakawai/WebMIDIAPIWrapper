@@ -1,0 +1,71 @@
+<html>
+  <head></head>
+  <body>
+    <div>Input: <select id="list-input"></select><button id="connect-input">Connect</button></div>
+    <div>Output: <select id="list-output"></select><button id="connect-output">Connect</button></div>
+
+    <script type="module">
+     import WebMIDIAPIWrapper from './js/webmidiapiwrapper.es6';
+     
+     (async function() {
+       let connect_input = document.querySelector('#connect-input');
+       let connect_output = document.querySelector('#connect-output');
+       let list_input = document.querySelector('#list-input');
+       let list_output = document.querySelector('#list-output');
+
+       async function main(){
+         const wmaw = new WebMIDIAPIWrapper();
+         if( await wmaw.initMIDIAccess() === true ) {
+           let midi_device_list = wmaw.getMIDIDeviceList();
+           updateDeviceSelectList('input', midi_device_list.input, list_input);
+           updateDeviceSelectList('output', midi_device_list.output, list_output);
+         }
+         connect_input.addEventListener('mousedown', event => {
+           let selValue = list_input[list_input.selectedIndex].value;
+           let self = wmaw;
+           wmaw.setMIDIInputToPort(selValue, 0, event => {
+             event.data[0] = event.data[0] + 1;
+             self.sendRaw(0, event.data, 0);
+           });
+
+         }, false);
+
+         connect_output.addEventListener('mousedown', event => {
+           let selValue = list_output[list_output.selectedIndex].value;
+           wmaw.setMIDIOutputToPort(selValue, 0);
+         }, false);
+
+         wmaw.setStateChangeHandler( ( type, midi_device_list ) => {
+           let target_elem = (type == 'output') ? list_output : list_input;
+           updateDeviceSelectList(type, midi_device_list, target_elem);
+         });
+
+       }
+
+       const updateDeviceSelectList = ( type, midi_device_list, target_elem ) => {
+         let selected_idx = getSelectedIdx(target_elem[target_elem.selectedIndex]);
+         target_elem.innerHTML = '<option value="">[Select One]</option>';
+         for(let i=0; i<midi_device_list.length; i++) {
+           let device = midi_device_list[i];
+           if(device['id'] == selected_idx.input) op_select = i + 1;
+             
+           let selected = false;
+           if(device['id'] == selected_idx) selected = true;
+           let op = new Option(device['name'], device['id'], false, selected);
+           if( device.isAvailable === true ) target_elem.appendChild(op);
+         }
+         function getSelectedIdx(select_status){
+           let selected_idx = '';
+           if(typeof select_status !== 'undefined') {
+             selected_idx = select_status.value;
+           }
+           return selected_idx;
+         }
+       };
+              
+       main();
+       
+     }());
+    </script>
+  </body>
+</html>
