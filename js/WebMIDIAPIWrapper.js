@@ -75,7 +75,7 @@ WebMIDIAPIWrapper.prototype = {
     initializePerformanceNow: function() {
         this.performanceNow=window.performance.now();
     },
-    _checkTyeof: function(type, obj) {
+    _checkTypeof: function(type, obj) {
         var clas = Object.prototype.toString.call(obj).slice(8, -1);
         return obj !== undefined && obj !== null && clas === type;
     },
@@ -215,7 +215,7 @@ WebMIDIAPIWrapper.prototype = {
             return;
         }
         var now=this.performanceNow;
-        if(this._checkTyeof("array", msg)===true) {
+        if(this._checkTypeof("array", msg)===true) {
             console.log("[Error] SendRaw : msg must array." + msg);
             return;
         }
