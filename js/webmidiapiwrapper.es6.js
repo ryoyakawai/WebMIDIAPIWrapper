@@ -3,6 +3,8 @@
 export default class WebMIDIAPIWrapper {
   constructor(){
     this.midiAccess = null;
+    this.bay = [];
+    this.patchs = { 'input':[], 'output':[] };
     this.ports = { 'input':[], 'output':[] };
     this.devices = { };
     this.sysex = false;
@@ -109,9 +111,9 @@ export default class WebMIDIAPIWrapper {
     }
   }
   setMIDIInputToPort(device_id, portNo, callback) {
+    let out = false;
     let sel_idx = this._getPortByDeviceid('input', device_id);
     this.devices.input[sel_idx].onmidimessage = callback.bind(this);
-    let out = false;
     portNo = this._checkPortNo(portNo);
     if(portNo !== false) {
       this.ports.input[portNo] = this.devices.input[sel_idx];
@@ -281,7 +283,9 @@ export default class WebMIDIAPIWrapper {
       console.log("[Error] SendRaw : msg must array." + msg);
       return;
     }
-    this.ports.output[portNo].send(msg, now + time);
+    if(typeof this.ports.output[portNo] != 'undefined') {
+      this.ports.output[portNo].send(msg, now + time);
+    }
   }
   parseMIDIMessage(msg) {
     if(typeof msg !== "object") {

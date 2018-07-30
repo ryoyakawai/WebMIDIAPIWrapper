@@ -1,45 +1,121 @@
 <html>
-  <head></head>
-  <body>
-    <div>Input: <select id="list-input"></select><button id="connect-input">Connect</button></div>
-    <div>Output: <select id="list-output"></select><button id="connect-output">Connect</button></div>
+  <head>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 
+    <link rel="stylesheet" href="./css/style.css">
+  </head>
+  <body>
+
+    <div class="midi-patches">
+
+      <div class="midi-patch-selector">
+        <select id="list-input-00" class="device-select"></select> ch: <input type="number" min="1" max="16" value="0" class="ch-select">
+        <i class="material-icons">arrow_forward</i>
+        <select id="list-output-00" class="device-select"></select> ch: <input type="number" min="1" max="16" value="0" class="ch-select">
+      </div>
+      
+<!--
+      <div class="midi-patch-selector">
+        <select id="list-input-01" class="device-select"></select>
+        <i class="material-icons">arrow_forward</i>
+        <select id="list-output-01" class="device-select"></select>
+      </div>
+
+      <div class="midi-patch-selector">
+        <select id="list-input-02" class="device-select"></select>
+        <i class="material-icons">arrow_forward</i>
+        <select id="list-output-02" class="device-select"></select>
+      </div>
+
+      <div class="midi-patch-selector">
+        <select id="list-input-03" class="device-select"></select>
+        <i class="material-icons">arrow_forward</i>
+        <select id="list-output-03" class="device-select"></select>
+      </div>
+
+      <div class="midi-patch-selector">
+        <select id="list-input-04" class="device-select"></select>
+        <i class="material-icons">arrow_forward</i>
+        <select id="list-output-04" class="device-select"></select>
+      </div>
+-->
+    </div>
+      
     <script type="module">
      import WebMIDIAPIWrapper from './js/webmidiapiwrapper.es6';
      
      (async function() {
-       let connect_input = document.querySelector('#connect-input');
-       let connect_output = document.querySelector('#connect-output');
-       let list_input = document.querySelector('#list-input');
-       let list_output = document.querySelector('#list-output');
+       let list_input = []; let list_output = [];
+       for(let i=0; i<document.querySelectorAll('.midi-patch-selector').length; i++) {
+         let num = ('00' + i.toString()).substr(-2);
+         list_input.push(document.querySelector(`#list-input-${num}`));
+         list_output.push(document.querySelector(`#list-output-${num}`));
+       }
 
        async function main(){
          const wmaw = new WebMIDIAPIWrapper();
          if( await wmaw.initMIDIAccess() === true ) {
            let midi_device_list = wmaw.getMIDIDeviceList();
-           updateDeviceSelectList('input', midi_device_list.input, list_input);
-           updateDeviceSelectList('output', midi_device_list.output, list_output);
-         }
-         connect_input.addEventListener('mousedown', event => {
-           let selValue = list_input[list_input.selectedIndex].value;
+           
            let self = wmaw;
-           wmaw.setMIDIInputToPort(selValue, 0, event => {
-             event.data[0] = event.data[0] + 1;
-             self.sendRaw(0, event.data, 0);
+           let ch = 0;
+           list_input.map( midi_in => {
+             updateDeviceSelectList('input', midi_device_list.input, midi_in);
+             midi_in.addEventListener('change', event => {
+               let selValue = midi_in[midi_in.selectedIndex].value;
+               wmaw.setMIDIInputToPort(selValue, 0, event => {
+                 event.data[0] = event.data[0]+1;
+                 self.sendRaw(0, event.data, 0);
+               });
+             }, false);
+             ch += 1;
            });
 
-         }, false);
+           ch = 0;
+           list_output.map( midi_out => {
+             updateDeviceSelectList('output', midi_device_list.output, midi_out);
+             midi_out.addEventListener('change', event => {
+               let selValue = midi_out[midi_out.selectedIndex].value;
+               wmaw.setMIDIOutputToPort(selValue, 0);
+             }, false);
+             ch += 1;
+           });
 
-         connect_output.addEventListener('mousedown', event => {
-           let selValue = list_output[list_output.selectedIndex].value;
-           wmaw.setMIDIOutputToPort(selValue, 0);
-         }, false);
+           wmaw.setStateChangeHandler( ( type, midi_device_list ) => {
+             let target_elems = (type == 'output') ? list_output : list_input;
+             target_elems.map( elem => {
+               updateDeviceSelectList(type, midi_device_list, elem);
+             });
+           });
+           
 
-         wmaw.setStateChangeHandler( ( type, midi_device_list ) => {
-           let target_elem = (type == 'output') ? list_output : list_input;
-           updateDeviceSelectList(type, midi_device_list, target_elem);
-         });
+           /*
+           updateDeviceSelectList('input', midi_device_list.input, list_input);
+           list_input.addEventListener('change', event => {
+             let selValue = list_input[list_input.selectedIndex].value;
+             let self = wmaw;
+             wmaw.setMIDIInputToPort(selValue, 0, event => {
+               event.data[0] = event.data[0] + 1;
+               self.sendRaw(0, event.data, 0);
+             });
+           }, false);
+           
+           updateDeviceSelectList('output', midi_device_list.output, list_output);
+           list_output.addEventListener('change', event => {
+             let selValue = list_output[list_output.selectedIndex].value;
+             wmaw.setMIDIOutputToPort(selValue, 0);
+           }, false);
 
+           wmaw.setStateChangeHandler( ( type, midi_device_list ) => {
+             let target_elem = (type == 'output') ? list_output : list_input;
+             updateDeviceSelectList(type, midi_device_list, target_elem);
+           });
+            */
+
+         }
        }
 
        const updateDeviceSelectList = ( type, midi_device_list, target_elem ) => {
